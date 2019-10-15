@@ -34,6 +34,10 @@ exports.publishFirefoxExtension = async ({ addOnSlug, xpiPath, sourcesArchivePat
         logger.log(`Navigating to ${submitUrl}`);
         await Promise.all([page.waitForNavigation(), page.goto(submitUrl)]);
         // Login
+        if (await page.evaluate(/* istanbul ignore next */ () => location.pathname === '/authorization')) {
+            logger.log('Waiting for redirection to signin page');
+            await page.waitForNavigation();
+        }
         if (await page.evaluate(/* istanbul ignore next */ () => location.pathname === '/oauth/signin')) {
             logger.log('Redirected to signin page');
             await page.waitForSelector('.sign-in input.email');
